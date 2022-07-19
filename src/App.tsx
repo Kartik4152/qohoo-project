@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Navbar from './components/Navbar/Navbar';
-import Landing from './Landing';
+import Landing from './pages/Landing/Landing';
 
 function App() {
   return (

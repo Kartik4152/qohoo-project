@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useCallback} from 'react';
-import image1 from './assets/Clothing/Page1/3_transparent.png';
-import Item from './components/Item/Item';
-import bag from './assets/Accesories/bag.png';
-import shoes from './assets/Accesories/shoes.png';
-import image2 from './assets/Clothing/Page2/1_cropped.jpg';
-import arrow8 from './assets/arrows/a8.png';
-import arrow9 from './assets/arrows/a9.png';
+import image1 from '../../assets/Clothing/Page1/3_transparent.png';
+import Item from '../../components/Item/Item';
+import bag from '../../assets/Accesories/bag.png';
+import shoes from '../../assets/Accesories/shoes.png';
+import image2 from '../../assets/Clothing/Page2/1_cropped.jpg';
+import arrow8 from '../../assets/arrows/a8.png';
+import arrow9 from '../../assets/arrows/a9.png';
 import {AiOutlinePlus} from 'react-icons/ai';
 import {SiPluscodes} from 'react-icons/si';
 import {FaFacebookF, FaTwitter, FaInstagram} from 'react-icons/fa';
@@ -20,10 +20,28 @@ const Landing = () => {
   const plusButton = useRef(null);
   const text1 = useRef(null);
   const text2 = useRef(null);
+  const text3 = useRef(null);
+  const text4 = useRef(null);
   const sidebar = useRef(null);
   const sidebarImage = useRef(null);
   const sidebarText = useRef(null);
   const timeline = useRef(gsap.timeline({defaults:{duration:0.6}}));
+  const expandTimeline = useRef(gsap.timeline({defaults:{duration: 0.6}}));
+
+  const expand = useCallback(()=>{
+    expandTimeline.current.to(sidebar.current, {x:"24rem", opacity:0, ease:Power1.easeOut})
+    .to(girlRef.current, {x:"36rem", ease:Power1.easeOut},'<')
+    .to(circleBlob.current, {x:"40rem", ease:Power1.easeOut},'<')
+    .to(plusButton.current, {scale: 0, opacity:0, ease:Power1.easeInOut},'<')
+    .to('.accessories > div > div', {opacity: 0, y: "9rem", scale:0, ease:Power1.easeOut, stagger:0.1}, '<')
+    .to('.socials > div', {opacity:0, x:0, scale:0, ease:Power1.easeOut, stagger:0.1}, '<')
+    .to('.arrow', {scale: 0, opacity:0, rotateX:"12deg", ease:Bounce.easeInOut, stagger:0.1},'<')
+    .to('.rotatePlus', {opacity:0, ease:Power0.easeIn},'<')
+    .to(text1.current, {y:"-12rem", ease:Power1.easeIn}, '<')
+    .to(text2.current, {y:"-12rem", ease:Power1.easeIn},'<.1')
+    .to(text3.current, {display:'block', opacity: 1, y:"-12rem"}, '<.2')
+    .to(text4.current, {display:'block', opacity: 1, y:"-12rem"}, '<.2');
+  },[]);
 
   const animateSVGText = useCallback(()=>{
     const paths: [SVGPathElement] = document.querySelectorAll("svg#sidebarText path") as any;
@@ -48,33 +66,40 @@ const Landing = () => {
     .to('.accessories > div > div', {opacity: 1, y: 0, ease:Power1.easeOut, stagger:0.1}, '<')
     .to('.arrow', {scale: 1, opacity:1, rotateX:0, ease:Bounce.easeInOut, stagger:0.1},'<')
     .to('.rotatePlus', {opacity:1, ease:Power0.easeIn},'<')
-    .to('.rotatePlus', {duration:2, rotation:"360", repeat:-1, ease:Power0.easeIn},'<')
+    .fromTo('.rotatePlus', {duration:2, rotation:"0", repeat:-1, ease:Power0.easeIn},{duration:2, rotation:"360", repeat:-1, ease:Power0.easeIn}, '<')
     .to(sidebar.current, {x:0, ease:Power1.easeOut, onComplete:animateSVGText},'<')
     .to(sidebarText.current, {x:0 , opacity:1, ease:Power1.easeOut}, '<.1')
     .to(sidebarImage.current, {height: '70%', opacity: 1, ease:Power1.easeOut}, '<.2')
     .to(plusButton.current, {scale: 1, ease:Power1.easeInOut},0.8);
-  }, [])
+  }, [animateSVGText])
   return (
-    <div className='w-full h-full pt-28 flex items-center justify-center overflow-hidden pr-16 relative'>
+    <div className='w-full h-full pt-28 flex items-center justify-center overflow-hidden pr-32 relative'>
         {/* girl and center blob */}
-        <div ref={circleBlob} className='rounded-full h-[34rem] w-[34rem] bg-[#d5e2ae] bg-opacity-70 absolute opacity-0'></div>
+        <div ref={circleBlob} className='rounded-full h-[34rem] w-[34rem] bg-[#d5e2ae] bg-opacity-70 absolute opacity-0 translate-x-0'></div>
         <img ref={girlRef} src={image1} className='object-contain h-[calc(100%-6rem)] z-10 absolute bottom-0 -translate-x-96 opacity-0' alt=""/>
         {/* title text */}
-        <div className='absolute flex flex-col left-[22%] z-20 -tracking-[0.2rem]'>
-            <span ref={text1} className='text-5xl -translate-x-20 opacity-0'>TIED GREEN</span>
-            <span ref={text2} className='text-5xl translate-x-20 opacity-0'>V-NECK SHIRT</span>
+        <div className='absolute flex flex-col left-[15%] z-20 -tracking-[0.2rem] w-[30rem] h-64 translate-y-20'>
+            <span ref={text1} className='text-5xl -translate-x-20 opacity-0 translate-y-0'>TIED GREEN</span>
+            <span ref={text2} className='text-5xl translate-x-20 opacity-0 translate-y-0'>V-NECK SHIRT</span>
+            <div ref={text3} className='text-4xl font-normal mt-4 opacity-0 hidden tracking-normal translate-y-0'>
+              $67
+            </div>
+            <div ref={text4} className='text-base font-normal mt-8 opacity-0 hidden tracking-normal translate-y-0'>
+              <span>V-neck shirt with lapel collar. Long sleeves with cuffs.</span>
+              <span>Front Tie at hem. Front button closure.</span>
+            </div>
         </div>
         {/* accessories */}
-        <div className='accessories absolute flex flex-col justify-center right-[25%] z-20 overflow-hidden'>
+        <div className='accessories absolute flex flex-col justify-center right-[30%] z-20 overflow-hidden'>
           <div className='h-fit w-fit overflow-hidden'>
-            <Item className="opacity-0 translate-y-36" title="Medium Crossbody Bag" image={bag} price={54}/>
+            <Item className="opacity-0 translate-y-36 scale-100 origin-bottom-right" title="Medium Crossbody Bag" image={bag} price={54}/>
           </div>
           <div className='h-fit w-fit overflow-hidden'>
-            <Item className="opacity-0 translate-y-36" title="High Heel Sandals" image={shoes} price={89}/>  
+            <Item className="opacity-0 translate-y-36 scale-100 origin-bottom-right" title="High Heel Sandals" image={shoes} price={89}/>  
           </div>          
         </div>
         {/* plus button */}
-        <div ref={plusButton} className='h-12 w-12 rounded-full absolute bg-black z-20 text-white flex justify-center items-center text-xl text-opacity-80 -translate-x-14 cursor-pointer scale-0'>
+        <div ref={plusButton} className='h-12 w-12 rounded-full absolute bg-black z-20 text-white flex justify-center items-center text-xl text-opacity-80 -translate-x-14 cursor-pointer scale-0 opacity-100' onClick={expand}>
           <AiOutlinePlus />
         </div>
         {/* socials */}
