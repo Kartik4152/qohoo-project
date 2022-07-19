@@ -1,9 +1,28 @@
-import React, { useRef, useEffect, useCallback} from 'react';
-import image1 from '../../assets/Clothing/Page1/3_transparent.png';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useRef, useEffect, useCallback, useState, SetStateAction} from 'react';
+
+import image1_transparent from '../../assets/Clothing/Page1/3_transparent.png';
+import image1 from '../../assets/Clothing/Page1/3.jpg';
+
+import image2_transparent from '../../assets/Clothing/Page1/1_transparent.png';
+import image2 from '../../assets/Clothing/Page1/1.jpg';
+
+import image3_transparent from '../../assets/Clothing/Page1/5_transparent.png';
+import image3 from '../../assets/Clothing/Page1/5.jpg';
+
+import image4_transparent from '../../assets/Clothing/Page1/4_transparent.png';
+import image4 from '../../assets/Clothing/Page1/4.jpg';
+
+import image5_transparent from '../../assets/Clothing/Page1/2_transparent.png';
+import image5 from '../../assets/Clothing/Page1/2.jpg';
+
+
 import Item from '../../components/Item/Item';
 import bag from '../../assets/Accesories/bag.png';
 import shoes from '../../assets/Accesories/shoes.png';
-import image2 from '../../assets/Clothing/Page2/1_cropped.jpg';
+import page2img from '../../assets/Clothing/Page2/1_cropped.jpg';
+import arrow3 from '../../assets/arrows/a3.png';
+import arrow5 from '../../assets/arrows/a5.png';
 import arrow8 from '../../assets/arrows/a8.png';
 import arrow9 from '../../assets/arrows/a9.png';
 import {AiOutlinePlus} from 'react-icons/ai';
@@ -12,11 +31,13 @@ import {FaFacebookF, FaTwitter, FaInstagram} from 'react-icons/fa';
 import {BsChevronRight, BsChevronUp} from 'react-icons/bs';
 import {gsap, Power1, Power0, Bounce} from 'gsap';
 
-import './Landing.css';
+import Selector from '../../components/Selector/Selector';
+
 
 const Landing = () => {
   const girlRef = useRef(null);
   const circleBlob = useRef(null);
+  const circleBlob2 = useRef(null);
   const plusButton = useRef(null);
   const text1 = useRef(null);
   const text2 = useRef(null);
@@ -25,23 +46,46 @@ const Landing = () => {
   const sidebar = useRef(null);
   const sidebarImage = useRef(null);
   const sidebarText = useRef(null);
+  const addButton = useRef(null);
+  const images = useRef([[image1,image1_transparent],[image2,image2_transparent],[image3,image3_transparent],[image4,image4_transparent],[image5,image5_transparent]]);
   const timeline = useRef(gsap.timeline({defaults:{duration:0.6}}));
   const expandTimeline = useRef(gsap.timeline({defaults:{duration: 0.6}}));
 
+  const [selectedImage, setSelectedImage] = useState([image1, image1_transparent]);
+
+  const switchImage=(val: SetStateAction<string[]>)=>{
+    setSelectedImage(val);
+    gsap.fromTo(girlRef.current, {x:"42rem",opacity:0,ease:Power1.easeOut}, {x:"36rem",opacity:1,ease:Power1.easeOut});
+  }
+
+  const reverseExpansion = useCallback(()=>{
+    expandTimeline.current.reverse();
+    timeline.current.play();
+  },[])
+
   const expand = useCallback(()=>{
+    timeline.current.pause();
+    expandTimeline.current.play();
     expandTimeline.current.to(sidebar.current, {x:"24rem", opacity:0, ease:Power1.easeOut})
     .to(girlRef.current, {x:"36rem", ease:Power1.easeOut},'<')
     .to(circleBlob.current, {x:"40rem", ease:Power1.easeOut},'<')
-    .to(plusButton.current, {scale: 0, opacity:0, ease:Power1.easeInOut},'<')
-    .to('.accessories > div > div', {opacity: 0, y: "9rem", scale:0, ease:Power1.easeOut, stagger:0.1}, '<')
-    .to('.socials > div', {opacity:0, x:0, scale:0, ease:Power1.easeOut, stagger:0.1}, '<')
-    .to('.arrow', {scale: 0, opacity:0, rotateX:"12deg", ease:Bounce.easeInOut, stagger:0.1},'<')
-    .to('.rotatePlus', {opacity:0, ease:Power0.easeIn},'<')
-    .to(text1.current, {y:"-12rem", ease:Power1.easeIn}, '<')
-    .to(text2.current, {y:"-12rem", ease:Power1.easeIn},'<.1')
-    .to(text3.current, {display:'block', opacity: 1, y:"-12rem"}, '<.2')
-    .to(text4.current, {display:'block', opacity: 1, y:"-12rem"}, '<.2');
-  },[]);
+    .to(circleBlob2.current, {x:"40rem", ease:Power1.easeOut},'<.025')
+    .to(plusButton.current, {scale: 0, opacity:0, display:'none', ease:Power1.easeInOut},'<')
+    .to('.accessories > div > div', {opacity: 0, y: "9rem", scale:0, display:'none', ease:Power1.easeOut, stagger:0.1}, '<')
+    .to('.socials > div', {opacity:0, x:0, scale:0, display:'none', ease:Power1.easeOut, stagger:0.1}, '<')
+    .to('.arrow', {scale: 0, opacity:0, rotateX:"12deg", display:'none', ease:Bounce.easeInOut, stagger:0.1},'<')
+    .to('.rotatePlus', {opacity:0, display:'none', ease:Power0.easeIn},'<')
+    .to(text1.current, {y:"-16rem", ease:Power1.easeIn}, '<')
+    .to(text2.current, {y:"-16rem", ease:Power1.easeIn},'<.1')
+    .to(text3.current, {display:'block', opacity: 1, y:"-16rem",ease:Power1.easeIn}, '<.2')
+    .to(text4.current, {display:'block', opacity: 1, y:"-16rem",ease:Power1.easeIn}, '<.2')
+    .to(addButton.current, {display:'flex', scale:1 ,ease:Bounce.easeOut},'<')
+    .to('#imgSelector', {display: 'flex'}, '<')
+    .to('#imgSelector > div:nth-child(1)', {opacity: 1, x:0,ease:Power1.easeIn, duration:0.3}, '<.4')
+    .to('#imgSelector > div:nth-child(2) > *', {opacity: 1, x:0, scale:1, ease:Power1.easeIn, duration:0.3}, '<')
+    .to('#imgSelector > div:nth-child(3) > div', {opacity: 1, x:0, y:0, scale:1, stagger:0.2, ease:Power1.easeOut}, '<')
+    .to('.arrow2', {display:'block',scale: 1, opacity:1, rotation:360, duration:0.5, ease:Power1.easeOut, stagger:0.2},'<');
+  }, []);
 
   const animateSVGText = useCallback(()=>{
     const paths: [SVGPathElement] = document.querySelectorAll("svg#sidebarText path") as any;
@@ -58,8 +102,11 @@ const Landing = () => {
     }
   }, [])
   useEffect(()=>{
+    timeline.current.play();
+    expandTimeline.current.pause();
     timeline.current.to(girlRef.current, {delay:0.4, opacity:1, x:0, ease:Power1.easeOut})
-    .to(circleBlob.current,{opacity:1, ease:Power1.easeIn}, 0.4)
+    .to(circleBlob.current,{opacity:1, ease:Power1.easeIn},'<')
+    .to(circleBlob2.current,{opacity:1, ease:Power1.easeIn}, '<')
     .to(text1.current, {opacity:1, x:0, ease:Power1.easeIn}, '<')
     .to(text2.current, {opacity:1, x:0, ease:Power1.easeIn},'<')
     .to('.socials > div', {opacity:1, x:0, scale:1, ease:Power1.easeOut, stagger:0.1}, '<')
@@ -70,13 +117,14 @@ const Landing = () => {
     .to(sidebar.current, {x:0, ease:Power1.easeOut, onComplete:animateSVGText},'<')
     .to(sidebarText.current, {x:0 , opacity:1, ease:Power1.easeOut}, '<.1')
     .to(sidebarImage.current, {height: '70%', opacity: 1, ease:Power1.easeOut}, '<.2')
-    .to(plusButton.current, {scale: 1, ease:Power1.easeInOut},0.8);
-  }, [animateSVGText])
+    .to(plusButton.current, {scale: 1, ease:Power1.easeInOut});
+  }, [])
   return (
     <div className='w-full h-full pt-28 flex items-center justify-center overflow-hidden pr-32 relative'>
         {/* girl and center blob */}
         <div ref={circleBlob} className='rounded-full h-[34rem] w-[34rem] bg-[#d5e2ae] bg-opacity-70 absolute opacity-0 translate-x-0'></div>
-        <img ref={girlRef} src={image1} className='object-contain h-[calc(100%-6rem)] z-10 absolute bottom-0 -translate-x-96 opacity-0' alt=""/>
+        <div ref={circleBlob2} className='rounded-full h-[34rem] w-[34rem] bg-[#e9f2cf] bg-opacity-70 absolute opacity-0 translate-x-0 rotate-45 scale-x-110'></div>
+        <img ref={girlRef} src={selectedImage[1]} className='object-contain h-[calc(100%-6rem)] z-10 absolute bottom-0 -translate-x-96 opacity-0' alt=""/>
         {/* title text */}
         <div className='absolute flex flex-col left-[15%] z-20 -tracking-[0.2rem] w-[30rem] h-64 translate-y-20'>
             <span ref={text1} className='text-5xl -translate-x-20 opacity-0 translate-y-0'>TIED GREEN</span>
@@ -88,6 +136,14 @@ const Landing = () => {
               <span>V-neck shirt with lapel collar. Long sleeves with cuffs.</span>
               <span>Front Tie at hem. Front button closure.</span>
             </div>
+        </div>
+        {/* Size/Image Selector */}
+        <div className='absolute left-[15%] bottom-4 z-20'>
+          <Selector images={images.current} selectImage={switchImage}/>
+        </div>
+        {/* Add Button */}
+        <div ref={addButton} onClick={reverseExpansion} className='absolute h-24 w-24 top-[35%] right-[40%] bg-[#CE3E4A] rounded-full uppercase justify-center items-center text-white cursor-pointer hidden scale-0'>
+          add
         </div>
         {/* accessories */}
         <div className='accessories absolute flex flex-col justify-center right-[30%] z-20 overflow-hidden'>
@@ -136,7 +192,7 @@ const Landing = () => {
                 </g>
               </svg>
             </div>
-            <img src={image2} alt="summer 2020" className='object-contain h-full w-full'/>
+            <img src={page2img} alt="summer 2020" className='object-contain h-full w-full'/>
           </div>
           <div ref={sidebarText} className='uppercase flex gap-4 absolute bottom-8 items-center justify-center cursor-pointer opacity-0 translate-x-4'>
             <span>Size Guide</span>
@@ -147,6 +203,8 @@ const Landing = () => {
         <img src={arrow8} alt="red arrow" className='arrow absolute h-16 object-contain top-48 left-96 opacity-0 scale-0 rotate-90'/>
         <img src={arrow9} alt="red arrow" className='arrow absolute h-12 object-contain bottom-12 right-[30%] opacity-0 scale-0 -rotate-45'/> 
         <SiPluscodes color='#DF6A63' className='rotatePlus absolute top-36 left-[35%] opacity-0 text-2xl'/>
+        <img src={arrow3} alt="red arrow" className='arrow2 absolute h-16 object-contain top-48 right-[40%] opacity-0 scale-0 hidden'/>
+        <img src={arrow5} alt="red arrow" className='arrow2 absolute h-12 object-contain bottom-12 right-[30%] opacity-0 scale-0 hidden'/> 
     </div>
   )
 }
